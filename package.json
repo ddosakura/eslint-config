@@ -1,0 +1,50 @@
+{
+  "name": "@ddosakura/eslint-config",
+  "type": "module",
+  "version": "0.0.0",
+  "description": "ddosakura's ESLint config preset",
+  "author": "ddosakura",
+  "homepage": "https://github.com/ddosakura/eslint-config",
+  "keywords": [
+    "eslint-config"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "inspect:g": "eslint --flag unstable_ts_config --inspect-config",
+    "inspect": "npx @eslint/config-inspector",
+    "lint": "eslint --flag unstable_ts_config .",
+    "lint:fix": "eslint --flag unstable_ts_config . --fix",
+    "build": "tsup --format esm,cjs --clean --dts",
+    "changeset:beta": "changeset pre enter beta",
+    "changeset:exit": "changeset pre exit",
+    "publish-packages": "npm run build && changeset version && npx changeset publish"
+  },
+  "peerDependencies": {
+    "eslint": "^8.53.0 || ^9.0.0"
+  },
+  "dependencies": {
+    "@antfu/eslint-config": "^3.6.0",
+    "eslint-plugin-command": "^0.2.5"
+  },
+  "devDependencies": {
+    "@changesets/changelog-github": "^0.5.0",
+    "@changesets/cli": "^2.27.8",
+    "@ddosakura/changesets-scripts": "^0.1.0",
+    "@eslint/config-inspector": "^0.5.4",
+    "@types/node": "^22.5.5",
+    "eslint": "^9.10.0",
+    "jiti": "^1.21.6",
+    "tsup": "^8.2.4",
+    "typescript": "~5.6.2"
+  }
+}
