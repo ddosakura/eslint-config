@@ -1,6 +1,6 @@
-import sakuramo from './src'
+import sakura from './src'
 
-export default sakuramo({
+export default sakura({
   typescript: {
     tsconfigPath: 'tsconfig.json',
   },

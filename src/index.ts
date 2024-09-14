@@ -8,6 +8,8 @@ type AntFuParameters = Parameters<typeof antfu>
 type Options = AntFuParameters[0]
 export type UserConfig = AntFuParameters[1]
 
+type AntFuReturnType = ReturnType<typeof antfu>
+
 export type { TypedFlatConfigItem }
 
 export { builtinCommands }
@@ -53,7 +55,7 @@ const stylisticRules: UserConfig = {
 export function sakura(
   { commands: userCommands, ...options }: Partial<SakuraOptions> = {},
   ...userConfigs: UserConfig[]
-) {
+): AntFuReturnType {
   // const isInEditor = options.isInEditor ?? isInEditorEnv()
   let composer = antfu(
     options,
