@@ -136,7 +136,7 @@ run(
     errors: ['command-fix', 'command-fix'],
   },
   {
-    description: 'rest',
+    description: 'nest',
     code: $`
       // @keep-dto { "ignores": ["eF.g_h", ".j_k"] }
       export interface Foo {
@@ -156,7 +156,7 @@ run(
     errors: ['command-fix'],
   },
   {
-    description: 'more case: 1[][]',
+    description: 'UnaryExpression: e.g. -1',
     code: $`
       // @keep-dto
       export interface Foo {
@@ -183,6 +183,62 @@ run(
       // @keep-dto
       export interface Foo {
         a: number[][]
+      }
+    `,
+    errors: ['command-fix'],
+  },
+  {
+    description: 'TSTupleType: <default>',
+    code: $`
+      // @keep-dto
+      export interface Foo {
+        foo: [{ a: 1 }, 1]
+      }
+    `,
+    output: $`
+      // @keep-dto
+      export interface Foo {
+        foo: [{ a: number }, number]
+      }
+    `,
+    errors: ['command-fix'],
+  },
+  {
+    description: 'TSTupleType: asArray',
+    code: $`
+      // @keep-dto { "tuple": "asArray" }
+      export interface Foo {
+        foo1: [{ a: 1 }]
+        foo2: [[{ a: 1 }]]
+        bar1: [{ a: 1, b: [{ c: 1 }] }]
+        bar2: [{
+          a: 1
+          b1: [
+            { c: 1 }
+          ]
+          b2: [
+            { c: 1 },
+          ]
+        }]
+        baz1: [{ a: 1 }, 1]
+        baz2: [{ a: number }, number]
+        baz3: [{ a: [{ a: number }, number] }, number]
+      }
+    `,
+    output: $`
+      // @keep-dto { "tuple": "asArray" }
+      export interface Foo {
+        foo1: { a: number }[]
+        foo2: { a: number }[][]
+        bar1: { a: number, b: { c: number }[] }[]
+        bar2: {
+          a: number
+          b1: { c: number }[]
+          b2: { c: number }[]
+        }[]
+        baz1: { a: number }[]
+        baz2: { a: number }[]
+        baz3: { a: { a: number }[] }[]
       }
     `,
     errors: ['command-fix'],

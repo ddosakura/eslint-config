@@ -14,6 +14,11 @@ export interface KeepDtoInlineOptions {
   key: false | 'camelize' | 'pascalize' | 'underlize'
   /** ignore both normalizeKey & type annotation */
   ignores: string[]
+  /**
+   * - <default>: [{a: 1}, 1] => [{ a: number }, number]
+   * - 'asArray': [{a: 1}, 1] => { a: number }[]
+   */
+  tuple: 'asArray'
 }
 
 function normalizeKey(key: string, mode: KeepDtoInlineOptions['key'] = 'camelize') {
@@ -56,8 +61,10 @@ export const keepDto = defineCommand({
     const [from, to] = node.range
     const rawContent = ctx.source.text.slice(from, to)
     const s = new MagicString(rawContent)
-    function replace(range: TSESTree.Range, content: string) {
-      s.update(range[0] - from, range[1] - from, content)
+    function replace(range: TSESTree.Range, content: string | ((content: string) => string)) {
+      const start = range[0] - from
+      const end = range[1] - from
+      s.update(start, end, typeof content === 'string' ? content : content(s.slice(start, end)))
     }
     function formatTSLiteralType(tsLiteralType: TSESTree.TSLiteralType) {
       if (tsLiteralType.literal.type === AST_NODE_TYPES.Literal) {
@@ -73,7 +80,7 @@ export const keepDto = defineCommand({
         replace(tsLiteralType.range, 'number')
       }
     }
-    function run(els: TSESTree.TypeElement[], prefix = '') {
+    function run(els: (TSESTree.TypeElement | TSESTree.TypeNode)[], prefix = '') {
       for (const el of els) {
         if (el.type !== AST_NODE_TYPES.TSPropertySignature) continue
 
@@ -99,6 +106,26 @@ export const keepDto = defineCommand({
           }
           else if (typeNode.type === AST_NODE_TYPES.TSTypeLiteral) {
             run(typeNode.members, newKey)
+          }
+          else if (typeNode.type === AST_NODE_TYPES.TSTupleType) {
+            if (options?.tuple === 'asArray') {
+              /**
+               * remove
+               *
+               * 1. second element
+               * 2. ch after first element, e.g. ','、'\n' etc.
+               */
+              const start = typeNode.elementTypes[0].range[1] + 1
+              const end = typeNode.range[1]
+              if (start < end) {
+                replace([start, end], '')
+              }
+              formatTypeNode(typeNode.elementTypes[0])
+              replace(typeNode.range, c => `${c.slice(1, -1).trimStart()}[]`)
+            }
+            else {
+              typeNode.elementTypes.forEach(formatTypeNode)
+            }
           }
         }
         formatTypeNode(el.typeAnnotation.typeAnnotation)
