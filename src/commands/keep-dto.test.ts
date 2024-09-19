@@ -155,4 +155,36 @@ run(
     `,
     errors: ['command-fix'],
   },
+  {
+    description: 'more case: 1[][]',
+    code: $`
+      // @keep-dto
+      export interface Foo {
+        a: -1
+      }
+    `,
+    output: $`
+      // @keep-dto
+      export interface Foo {
+        a: number
+      }
+    `,
+    errors: ['command-fix'],
+  },
+  {
+    description: 'more case: 1[][]',
+    code: $`
+      // @keep-dto
+      export interface Foo {
+        a: 1[][]
+      }
+    `,
+    output: $`
+      // @keep-dto
+      export interface Foo {
+        a: number[][]
+      }
+    `,
+    errors: ['command-fix'],
+  },
 )

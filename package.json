@@ -45,6 +45,7 @@
     "@ddosakura/changesets-scripts": "^0.1.0",
     "@eslint/config-inspector": "^0.5.4",
     "@types/node": "^22.5.5",
+    "@typescript-eslint/types": "^8.6.0",
     "eslint": "^9.10.0",
     "eslint-vitest-rule-tester": "^0.6.1",
     "jiti": "^1.21.6",

@@ -1,5 +1,7 @@
 /* eslint-disable ts/strict-boolean-expressions */
 
+import type { TSESTree } from '@typescript-eslint/types'
+import { AST_NODE_TYPES } from '@typescript-eslint/types'
 import { defineCommand } from 'eslint-plugin-command/commands'
 import MagicString from 'magic-string'
 
@@ -48,23 +50,36 @@ export const keepDto = defineCommand({
       return ctx.reportError(`Failed to parse options: ${optionsRaw}`)
     }
 
-    const node = ctx.findNodeBelow('TSInterfaceBody')
+    const node = ctx.findNodeBelow(AST_NODE_TYPES.TSInterfaceBody)
     if (!node) return ctx.reportError('Unable to find dto')
 
     const [from, to] = node.range
     const rawContent = ctx.source.text.slice(from, to)
     const s = new MagicString(rawContent)
-    type Node = NonNullable<typeof node>
-    function replace(range: Node['range'], content: string) {
+    function replace(range: TSESTree.Range, content: string) {
       s.update(range[0] - from, range[1] - from, content)
     }
-    function run(els: Node['body'], prefix = '') {
+    function formatTSLiteralType(tsLiteralType: TSESTree.TSLiteralType) {
+      if (tsLiteralType.literal.type === AST_NODE_TYPES.Literal) {
+        replace(tsLiteralType.range, typeof tsLiteralType.literal.value)
+      }
+      // e.g. -1
+      else if (
+        tsLiteralType.literal.type === AST_NODE_TYPES.UnaryExpression
+        && tsLiteralType.literal.operator === '-'
+        && tsLiteralType.literal.argument.type === AST_NODE_TYPES.Literal
+        && typeof tsLiteralType.literal.argument.value === 'number'
+      ) {
+        replace(tsLiteralType.range, 'number')
+      }
+    }
+    function run(els: TSESTree.TypeElement[], prefix = '') {
       for (const el of els) {
-        if (el.type !== 'TSPropertySignature') continue
+        if (el.type !== AST_NODE_TYPES.TSPropertySignature) continue
 
         const rawKey = (() => {
-          if (el.key.type === 'Literal') return el.key.value as string
-          if (el.key.type === 'Identifier') return el.key.name
+          if (el.key.type === AST_NODE_TYPES.Literal) return el.key.value as string
+          if (el.key.type === AST_NODE_TYPES.Identifier) return el.key.name
         })()
         if (!rawKey) continue
         if (options?.ignores?.includes(`.${rawKey}`)) continue
@@ -75,22 +90,18 @@ export const keepDto = defineCommand({
         const newKey = identifier ? withPrefix(identifier, prefix) : key
 
         if (!el.typeAnnotation) continue
-        const typeAnnotation = el.typeAnnotation.typeAnnotation
-        if (typeAnnotation.type === 'TSLiteralType' && typeAnnotation.literal.type === 'Literal') {
-          replace(typeAnnotation.range, typeof typeAnnotation.literal.value)
-        }
-        else if (typeAnnotation.type === 'TSTypeLiteral') {
-          run(typeAnnotation.members, newKey)
-        }
-        else if (typeAnnotation.type === 'TSArrayType') {
-          const elementType = typeAnnotation.elementType
-          if (elementType.type === 'TSLiteralType' && elementType.literal.type === 'Literal') {
-            replace(elementType.range, typeof elementType.literal.value)
+        function formatTypeNode(typeNode: TSESTree.TypeNode) {
+          if (typeNode.type === AST_NODE_TYPES.TSLiteralType) {
+            formatTSLiteralType(typeNode)
           }
-          else if (elementType.type === 'TSTypeLiteral') {
-            run(elementType.members, newKey)
+          else if (typeNode.type === AST_NODE_TYPES.TSArrayType) {
+            formatTypeNode(typeNode.elementType)
+          }
+          else if (typeNode.type === AST_NODE_TYPES.TSTypeLiteral) {
+            run(typeNode.members, newKey)
           }
         }
+        formatTypeNode(el.typeAnnotation.typeAnnotation)
       }
     }
     run(node.body)
