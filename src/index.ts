@@ -29,9 +29,9 @@ const stylisticRules: UserConfig = {
       // @keep-sorted
       {
         code: 120,
-        comments: 80,
+        // comments: 80,
         ignoreRegExpLiterals: true,
-        ignoreStrings: true,
+        // ignoreStrings: true,
         ignoreTemplateLiterals: true,
         ignoreUrls: true,
         tabWidth: 2,
