@@ -243,4 +243,20 @@ run(
     `,
     errors: ['command-fix'],
   },
+  {
+    description: 'TSTypeAliasDeclaration',
+    code: $`
+      // @keep-dto
+      export type Foo = {
+        a: 1
+      }
+    `,
+    output: $`
+      // @keep-dto
+      export type Foo = {
+        a: number
+      }
+    `,
+    errors: ['command-fix'],
+  },
 )
