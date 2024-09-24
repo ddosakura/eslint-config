@@ -141,7 +141,7 @@ export const keepDto = defineCommand({
       run(node.typeAnnotation.members)
     }
     else {
-      return ctx.reportError('Unable to find dto')
+      return ctx.reportError('dto type error')
     }
 
     const newContent = s.toString()

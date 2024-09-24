@@ -259,4 +259,28 @@ run(
     `,
     errors: ['command-fix'],
   },
+  {
+    description: 'unable find',
+    code: $`
+      // @keep-dto
+      const foo = { a: 1 };
+    `,
+    output: $`
+      // @keep-dto
+      const foo = { a: 1 };
+    `,
+    errors: [{ messageId: 'command-error', message: '[keep-dto] error: Unable to find dto' }],
+  },
+  {
+    description: 'dto type error',
+    code: $`
+      // @keep-dto
+      type foo = 1;
+    `,
+    output: $`
+      // @keep-dto
+      type foo = 1;
+    `,
+    errors: [{ messageId: 'command-error', message: '[keep-dto] error: dto type error' }],
+  },
 )
