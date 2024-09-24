@@ -283,4 +283,28 @@ run(
     `,
     errors: [{ messageId: 'command-error', message: '[keep-dto] error: dto type error' }],
   },
+  // {
+  //   description: 'multi interfaces',
+  //   code: $`
+  //     // @keep-dto
+  //     interface A {
+  //       ab_cd: number
+  //     }
+  //     // @keep-dto { "key": "camelize" }
+  //     interface B {
+  //       ab_cd: number
+  //     }
+  //   `,
+  //   output: $`
+  //     // @keep-dto
+  //     interface A {
+  //       abCd: number
+  //     }
+  //     // @keep-dto { "key": "camelize" }
+  //     interface B {
+  //       abCd: number
+  //     }
+  //   `,
+  //   errors: [{ messageId: 'command-error', message: '[keep-dto] error: dto type error' }, 'command-fix'],
+  // },
 )

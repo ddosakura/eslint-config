@@ -37,7 +37,9 @@ function withPrefix(key: string, prefix = '') {
   return prefix ? `${prefix}.${key}` : key
 }
 
+// @regex101 https://regex101.com/?regex=%5E%5B%2F%40%3A%5D%5Cs*%28%3F%3Akeep-dto%7Cdto%29%5Cs*%28%5C%7B.*%5C%7D%29%3F%24&flavor=javascript
 const reLine = /^[/@:]\s*(?:keep-dto|dto)\s*(\{.*\})?$/
+// @regex101 https://regex101.com/?regex=%28%3F%3A%5Cb%7C%5Cs%29%40keep-dto%5Cs*%28%5C%7B.*%5C%7D%29%3F%28%3F%3A%5Cb%7C%5Cs%7C%24%29&flavor=javascript
 const reBlock = /(?:\b|\s)@keep-dto\s*(\{.*\})?(?:\b|\s|$)/
 
 export const keepDto = defineCommand({

@@ -37,12 +37,12 @@ interface A {
   key: false | 'camelize' | 'pascalize' | 'underlize'
 
 ```ts
-// @keep-dto
+/// keep-dto
 interface A {
   abCd: number
 }
 
-// @keep-dto { "key": "camelize" }
+/// keep-dto { "key": "camelize" }
 interface B {
   abCd: number
 }
@@ -105,5 +105,34 @@ interface Foo {
 interface A {
   a: number
   b: number
+}
+```
+
+## Some bug in `keep-sorted`
+
+```ts
+/// keep-sorted
+const arr = [
+  { index: 4, name: 'foo' },
+  { index: 2, name: 'bar' },
+  { index: 2, name: 'apple' },
+  { index: 0, name: 'zip' },
+]
+
+const arr2 = [
+  { index: 0, name: 'zip' },
+  { index: 2, name: 'apple' },
+  { index: 2, name: 'bar' },
+  { index: 4, name: 'foo' },
+]
+```
+
+```ts
+// https://github.com/antfu/eslint-plugin-command/issues/26
+/// ---keep-sorted
+const example = {
+  apple: '🍏',
+  orange: '🍊',
+  banana: '🍌',
 }
 ```
