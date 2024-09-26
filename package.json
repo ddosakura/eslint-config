@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "@antfu/eslint-config": "^3.6.0",
-    "eslint-plugin-command": "^0.2.5",
+    "eslint-plugin-command": "^0.2.6",
     "magic-string": "^0.30.11"
   },
   "devDependencies": {
