@@ -283,28 +283,52 @@ run(
     `,
     errors: [{ messageId: 'command-error', message: '[keep-dto] error: dto type error' }],
   },
-  // {
-  //   description: 'multi interfaces',
-  //   code: $`
-  //     // @keep-dto
-  //     interface A {
-  //       ab_cd: number
-  //     }
-  //     // @keep-dto { "key": "camelize" }
-  //     interface B {
-  //       ab_cd: number
-  //     }
-  //   `,
-  //   output: $`
-  //     // @keep-dto
-  //     interface A {
-  //       abCd: number
-  //     }
-  //     // @keep-dto { "key": "camelize" }
-  //     interface B {
-  //       abCd: number
-  //     }
-  //   `,
-  //   errors: [{ messageId: 'command-error', message: '[keep-dto] error: dto type error' }, 'command-fix'],
-  // },
+  {
+    description: 'multi interfaces',
+    code: $`
+      // @keep-dto
+      interface A {
+        ab_cd: number
+      }
+      // @keep-dto { "key": "camelize" }
+      interface B {
+        ab_cd: number
+      }
+    `,
+    output: $`
+      // @keep-dto
+      interface A {
+        abCd: number
+      }
+      // @keep-dto { "key": "camelize" }
+      interface B {
+        abCd: number
+      }
+    `,
+    errors: ['command-fix', 'command-fix'],
+  },
+  {
+    description: 'multi export interfaces',
+    code: $`
+      // @keep-dto
+      export interface A2 {
+        ab_cd: number
+      }
+      // @keep-dto { "key": "camelize" }
+      export interface B2 {
+        ab_cd: number
+      }
+    `,
+    output: $`
+      // @keep-dto
+      export interface A2 {
+        abCd: number
+      }
+      // @keep-dto { "key": "camelize" }
+      export interface B2 {
+        abCd: number
+      }
+    `,
+    errors: ['command-fix', 'command-fix'],
+  },
 )

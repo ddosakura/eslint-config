@@ -107,32 +107,3 @@ interface A {
   b: number
 }
 ```
-
-## Some bug in `keep-sorted`
-
-```ts
-/// keep-sorted
-const arr = [
-  { index: 4, name: 'foo' },
-  { index: 2, name: 'bar' },
-  { index: 2, name: 'apple' },
-  { index: 0, name: 'zip' },
-]
-
-const arr2 = [
-  { index: 0, name: 'zip' },
-  { index: 2, name: 'apple' },
-  { index: 2, name: 'bar' },
-  { index: 4, name: 'foo' },
-]
-```
-
-```ts
-// https://github.com/antfu/eslint-plugin-command/issues/26
-/// ---keep-sorted
-const example = {
-  apple: '🍏',
-  orange: '🍊',
-  banana: '🍌',
-}
-```

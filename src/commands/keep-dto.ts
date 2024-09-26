@@ -57,10 +57,15 @@ export const keepDto = defineCommand({
       return ctx.reportError(`Failed to parse options: ${optionsRaw}`)
     }
 
-    const node = ctx.findNodeBelow(
-      AST_NODE_TYPES.TSInterfaceBody,
-      AST_NODE_TYPES.TSTypeAliasDeclaration,
-    )
+    const types = [
+      AST_NODE_TYPES.TSInterfaceDeclaration as const,
+      AST_NODE_TYPES.TSTypeAliasDeclaration as const,
+    ]
+    const raw = ctx.findNodeBelow({ types, shallow: false, findAll: false })
+    const node = raw || ((node) => {
+      const type = node?.declaration?.type
+      if (type && (types as AST_NODE_TYPES[]).includes(type)) return node.declaration as unknown as typeof raw
+    })(ctx.findNodeBelow(AST_NODE_TYPES.ExportNamedDeclaration))
     if (!node) return ctx.reportError('Unable to find dto')
 
     const [from, to] = node.range
@@ -136,8 +141,8 @@ export const keepDto = defineCommand({
         formatTypeNode(el.typeAnnotation.typeAnnotation)
       }
     }
-    if (node.type === AST_NODE_TYPES.TSInterfaceBody) {
-      run(node.body)
+    if (node.type === AST_NODE_TYPES.TSInterfaceDeclaration) {
+      run(node.body.body)
     }
     else if (node.typeAnnotation.type === AST_NODE_TYPES.TSTypeLiteral) {
       run(node.typeAnnotation.members)
