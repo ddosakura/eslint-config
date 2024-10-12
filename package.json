@@ -1,7 +1,7 @@
 {
   "name": "@ddosakura/eslint-config",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "ddosakura's ESLint config preset",
   "author": "ddosakura",
   "homepage": "https://github.com/ddosakura/eslint-config",
