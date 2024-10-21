@@ -1,5 +1,13 @@
 # @ddosakura/eslint-config
 
+## 0.2.1
+
+### Patch Changes
+
+- [`edc25ba`](https://github.com/ddosakura/eslint-config/commit/edc25ba5cb69317bd342956459632aa3270e9c64) Thanks [@ddosakura](https://github.com/ddosakura)! - fix tuple asArray error in some cases
+
+- [`87334b5`](https://github.com/ddosakura/eslint-config/commit/87334b5a249fcf755036f203d467dcf5ce24a39a) Thanks [@ddosakura](https://github.com/ddosakura)! - export antfu's eslint-config
+
 ## 0.2.0
 
 ### Minor Changes
