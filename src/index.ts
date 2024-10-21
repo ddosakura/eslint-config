@@ -4,13 +4,14 @@ import { antfu } from '@antfu/eslint-config'
 import command from 'eslint-plugin-command/config'
 import { builtinCommands } from './commands'
 
+export type { TypedFlatConfigItem }
+export * from '@antfu/eslint-config'
+
 type AntFuParameters = Parameters<typeof antfu>
 type Options = AntFuParameters[0]
 export type UserConfig = AntFuParameters[1]
 
 type AntFuReturnType = ReturnType<typeof antfu>
-
-export type { TypedFlatConfigItem }
 
 export { builtinCommands }
 
