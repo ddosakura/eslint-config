@@ -125,13 +125,15 @@ export const keepDto = defineCommand({
                * 1. second element
                * 2. ch after first element, e.g. ','、'\n' etc.
                */
-              const start = typeNode.elementTypes[0].range[1] + 1
-              const end = typeNode.range[1]
-              if (start < end) {
-                replace([start, end], '')
+              if (typeNode.elementTypes.length > 0) {
+                const start = typeNode.elementTypes[0].range[1] + 1
+                const end = typeNode.range[1]
+                if (start < end) {
+                  replace([start, end], '')
+                }
+                formatTypeNode(typeNode.elementTypes[0])
+                replace(typeNode.range, c => `${c.slice(1, -1).trimStart()}[]`)
               }
-              formatTypeNode(typeNode.elementTypes[0])
-              replace(typeNode.range, c => `${c.slice(1, -1).trimStart()}[]`)
             }
             else {
               typeNode.elementTypes.forEach(formatTypeNode)

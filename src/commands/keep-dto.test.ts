@@ -208,6 +208,7 @@ run(
     code: $`
       // @keep-dto { "tuple": "asArray" }
       export interface Foo {
+        foo: []
         foo1: [{ a: 1 }]
         foo2: [[{ a: 1 }]]
         bar1: [{ a: 1, b: [{ c: 1 }] }]
@@ -228,6 +229,7 @@ run(
     output: $`
       // @keep-dto { "tuple": "asArray" }
       export interface Foo {
+        foo: []
         foo1: { a: number }[]
         foo2: { a: number }[][]
         bar1: { a: number, b: { c: number }[] }[]
