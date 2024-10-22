@@ -139,6 +139,17 @@ export const keepDto = defineCommand({
               typeNode.elementTypes.forEach(formatTypeNode)
             }
           }
+          else if (typeNode.type === AST_NODE_TYPES.TSTypeReference) {
+            const params = typeNode.typeArguments?.params
+            if (typeNode.typeName.type === AST_NODE_TYPES.Identifier) {
+              if (typeNode.typeName.name === 'Array' && params?.length === 1) {
+                formatTypeNode(params[0])
+              }
+              else if (typeNode.typeName.name === 'Record' && params?.length === 2) {
+                formatTypeNode(params[1])
+              }
+            }
+          }
         }
         formatTypeNode(el.typeAnnotation.typeAnnotation)
       }

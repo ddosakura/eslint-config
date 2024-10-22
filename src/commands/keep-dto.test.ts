@@ -333,4 +333,54 @@ run(
     `,
     errors: ['command-fix', 'command-fix'],
   },
+  {
+    description: 'Record<any, { ... }> & Array<{ ... }>',
+    code: $`
+      // @keep-dto
+      export interface Example {
+        record: Record<any, {
+          foo: 1
+        }>
+        record2: Record<1 | 2, {
+          foo: 1
+        }[]>
+        array: Array<{
+          foo: 1
+        }>
+        array2: Array<{
+          foo: 1
+        }[]>
+        mix: Array<Record<number, {
+          foo: 1
+        }>>
+        mix2: Record<string, Array<{
+          foo: 1
+        }>>
+      }
+    `,
+    output: $`
+      // @keep-dto
+      export interface Example {
+        record: Record<any, {
+          foo: number
+        }>
+        record2: Record<1 | 2, {
+          foo: number
+        }[]>
+        array: Array<{
+          foo: number
+        }>
+        array2: Array<{
+          foo: number
+        }[]>
+        mix: Array<Record<number, {
+          foo: number
+        }>>
+        mix2: Record<string, Array<{
+          foo: number
+        }>>
+      }
+    `,
+    errors: ['command-fix'],
+  },
 )
