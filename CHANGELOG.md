@@ -1,5 +1,11 @@
 # @ddosakura/eslint-config
 
+## 0.2.2
+
+### Patch Changes
+
+- [`6968b38`](https://github.com/ddosakura/eslint-config/commit/6968b38288d36dd43b504e2aed570f94eb97457a) Thanks [@ddosakura](https://github.com/ddosakura)! - @keep-dto support handle TSTypeReference (Array&Record)
+
 ## 0.2.1
 
 ### Patch Changes
