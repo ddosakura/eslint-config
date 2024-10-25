@@ -274,16 +274,22 @@ run(
     errors: [{ messageId: 'command-error', message: '[keep-dto] error: Unable to find dto' }],
   },
   {
-    description: 'dto type error',
+    // description: 'dto type error',
+    description: 'Literal Alias',
     code: $`
       // @keep-dto
       type foo = 1;
     `,
+    // output: $`
+    //   // @keep-dto
+    //   type foo = 1;
+    // `,
+    // errors: [{ messageId: 'command-error', message: '[keep-dto] error: dto type error' }],
     output: $`
       // @keep-dto
-      type foo = 1;
+      type foo = number;
     `,
-    errors: [{ messageId: 'command-error', message: '[keep-dto] error: dto type error' }],
+    errors: ['command-fix'],
   },
   {
     description: 'multi interfaces',
@@ -380,6 +386,47 @@ run(
           foo: number
         }>>
       }
+    `,
+    errors: ['command-fix'],
+  },
+  {
+    description: 'Array Types Alias',
+    code: $`
+      // @keep-dto
+      export type Tuple = [
+        { a: 1 },
+        { a: 2 },
+      ]
+      // @keep-dto { "tuple": "asArray" }
+      type Arr = [
+        { a: 1 },
+        { a: 2 },
+      ]
+      // @keep-dto { "ignores": ["a_b"] }
+      export type Arr2 = Array<{ a: 1, a_b: 2 }>
+    `,
+    output: $`
+      // @keep-dto
+      export type Tuple = [
+        { a: number },
+        { a: number },
+      ]
+      // @keep-dto { "tuple": "asArray" }
+      type Arr = { a: number }[]
+      // @keep-dto { "ignores": ["a_b"] }
+      export type Arr2 = Array<{ a: number, a_b: 2 }>
+    `,
+    errors: ['command-fix', 'command-fix', 'command-fix'],
+  },
+  {
+    description: 'Record Type Alias',
+    code: $`
+      // @keep-dto { "ignores": ["a_b"] }
+      export type R = Record<any, { a: 1, a_b: 2 }>
+    `,
+    output: $`
+      // @keep-dto { "ignores": ["a_b"] }
+      export type R = Record<any, { a: number, a_b: 2 }>
     `,
     errors: ['command-fix'],
   },

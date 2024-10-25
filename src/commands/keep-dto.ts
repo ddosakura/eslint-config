@@ -90,6 +90,51 @@ export const keepDto = defineCommand({
         replace(tsLiteralType.range, 'number')
       }
     }
+
+    function formatTypeNode(typeNode: TSESTree.TypeNode, prefix = '') {
+      if (typeNode.type === AST_NODE_TYPES.TSLiteralType) {
+        formatTSLiteralType(typeNode)
+      }
+      else if (typeNode.type === AST_NODE_TYPES.TSArrayType) {
+        formatTypeNode(typeNode.elementType, prefix)
+      }
+      else if (typeNode.type === AST_NODE_TYPES.TSTypeLiteral) {
+        run(typeNode.members, prefix)
+      }
+      else if (typeNode.type === AST_NODE_TYPES.TSTupleType) {
+        if (options?.tuple === 'asArray') {
+          /**
+           * remove
+           *
+           * 1. second element
+           * 2. ch after first element, e.g. ','、'\n' etc.
+           */
+          if (typeNode.elementTypes.length > 0) {
+            const start = typeNode.elementTypes[0].range[1] + 1
+            const end = typeNode.range[1]
+            if (start < end) {
+              replace([start, end], '')
+            }
+            formatTypeNode(typeNode.elementTypes[0], prefix)
+            replace(typeNode.range, c => `${c.slice(1, -1).trimStart()}[]`)
+          }
+        }
+        else {
+          typeNode.elementTypes.forEach(item => formatTypeNode(item, prefix))
+        }
+      }
+      else if (typeNode.type === AST_NODE_TYPES.TSTypeReference) {
+        const params = typeNode.typeArguments?.params
+        if (typeNode.typeName.type === AST_NODE_TYPES.Identifier) {
+          if (typeNode.typeName.name === 'Array' && params?.length === 1) {
+            formatTypeNode(params[0], prefix)
+          }
+          else if (typeNode.typeName.name === 'Record' && params?.length === 2) {
+            formatTypeNode(params[1], prefix)
+          }
+        }
+      }
+    }
     function run(els: (TSESTree.TypeElement | TSESTree.TypeNode)[], prefix = '') {
       for (const el of els) {
         if (el.type !== AST_NODE_TYPES.TSPropertySignature) continue
@@ -107,58 +152,14 @@ export const keepDto = defineCommand({
         const newKey = identifier ? withPrefix(identifier, prefix) : key
 
         if (!el.typeAnnotation) continue
-        function formatTypeNode(typeNode: TSESTree.TypeNode) {
-          if (typeNode.type === AST_NODE_TYPES.TSLiteralType) {
-            formatTSLiteralType(typeNode)
-          }
-          else if (typeNode.type === AST_NODE_TYPES.TSArrayType) {
-            formatTypeNode(typeNode.elementType)
-          }
-          else if (typeNode.type === AST_NODE_TYPES.TSTypeLiteral) {
-            run(typeNode.members, newKey)
-          }
-          else if (typeNode.type === AST_NODE_TYPES.TSTupleType) {
-            if (options?.tuple === 'asArray') {
-              /**
-               * remove
-               *
-               * 1. second element
-               * 2. ch after first element, e.g. ','、'\n' etc.
-               */
-              if (typeNode.elementTypes.length > 0) {
-                const start = typeNode.elementTypes[0].range[1] + 1
-                const end = typeNode.range[1]
-                if (start < end) {
-                  replace([start, end], '')
-                }
-                formatTypeNode(typeNode.elementTypes[0])
-                replace(typeNode.range, c => `${c.slice(1, -1).trimStart()}[]`)
-              }
-            }
-            else {
-              typeNode.elementTypes.forEach(formatTypeNode)
-            }
-          }
-          else if (typeNode.type === AST_NODE_TYPES.TSTypeReference) {
-            const params = typeNode.typeArguments?.params
-            if (typeNode.typeName.type === AST_NODE_TYPES.Identifier) {
-              if (typeNode.typeName.name === 'Array' && params?.length === 1) {
-                formatTypeNode(params[0])
-              }
-              else if (typeNode.typeName.name === 'Record' && params?.length === 2) {
-                formatTypeNode(params[1])
-              }
-            }
-          }
-        }
-        formatTypeNode(el.typeAnnotation.typeAnnotation)
+        formatTypeNode(el.typeAnnotation.typeAnnotation, newKey)
       }
     }
     if (node.type === AST_NODE_TYPES.TSInterfaceDeclaration) {
       run(node.body.body)
     }
-    else if (node.typeAnnotation.type === AST_NODE_TYPES.TSTypeLiteral) {
-      run(node.typeAnnotation.members)
+    else if (node.type === AST_NODE_TYPES.TSTypeAliasDeclaration) {
+      formatTypeNode(node.typeAnnotation)
     }
     else {
       return ctx.reportError('dto type error')
