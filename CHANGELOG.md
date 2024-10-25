@@ -1,5 +1,11 @@
 # @ddosakura/eslint-config
 
+## 0.2.3
+
+### Patch Changes
+
+- [`45972e0`](https://github.com/ddosakura/eslint-config/commit/45972e056d4084448d4d6356ae1a6925d1012d9f) Thanks [@ddosakura](https://github.com/ddosakura)! - support TSTypeAliasDeclaration for Array&Record&Literal
+
 ## 0.2.2
 
 ### Patch Changes
