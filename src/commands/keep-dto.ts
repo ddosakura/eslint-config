@@ -25,6 +25,10 @@ export interface KeepDtoInlineOptions {
    * @defalut false
    */
   literal: false | 'all' | 'union' | 'intersection'
+  /**
+   * Custom Utility Types
+   */
+  utilities: Record<string, number | number[]>
 }
 
 function normalizeKey(key: string, mode: KeepDtoInlineOptions['key'] = 'camelize') {
@@ -47,6 +51,12 @@ function withPrefix(key: string, prefix = '') {
 const reLine = /^[/@:]\s*(?:keep-dto|dto)\s*(\{.*\})?$/
 // @regex101 https://regex101.com/?regex=%28%3F%3A%5Cb%7C%5Cs%29%40keep-dto%5Cs*%28%5C%7B.*%5C%7D%29%3F%28%3F%3A%5Cb%7C%5Cs%7C%24%29&flavor=javascript
 const reBlock = /(?:\b|\s)@keep-dto\s*(\{.*\})?(?:\b|\s|$)/
+
+const typeReferences = {
+  $1_0: ['Array', 'Partial', 'Required', 'Readonly', 'NonNullable'],
+  $2_0: ['Pick', 'Omit'],
+  $2_1: ['Record'],
+}
 
 export const keepDto = defineCommand({
   name: 'keep-dto',
@@ -149,11 +159,22 @@ export const keepDto = defineCommand({
       else if (typeNode.type === AST_NODE_TYPES.TSTypeReference) {
         const params = typeNode.typeArguments?.params
         if (typeNode.typeName.type === AST_NODE_TYPES.Identifier) {
-          if (typeNode.typeName.name === 'Array' && params?.length === 1) {
+          if (typeReferences.$1_0.includes(typeNode.typeName.name) && params?.length === 1) {
             formatTypeNode(params[0], prefix)
           }
-          else if (typeNode.typeName.name === 'Record' && params?.length === 2) {
+          else if (typeReferences.$2_0.includes(typeNode.typeName.name) && params?.length === 2) {
+            formatTypeNode(params[0], prefix)
+          }
+          else if (typeReferences.$2_1.includes(typeNode.typeName.name) && params?.length === 2) {
             formatTypeNode(params[1], prefix)
+          }
+          else {
+            const opt = options?.utilities?.[typeNode.typeName.name] ?? []
+            const indexes = Array.isArray(opt) ? opt : [opt]
+            const max = Math.max(...indexes)
+            if (params && params.length > max) {
+              indexes.forEach(index => formatTypeNode(params[index], prefix))
+            }
           }
         }
       }

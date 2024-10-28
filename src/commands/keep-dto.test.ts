@@ -466,58 +466,64 @@ run(
     `,
     errors: ['command-fix'],
   },
-  // {
-  //   description: 'Utility Types #1: Partial&Required&Readonly&NonNullable',
-  //   code: $`
-  //     // @keep-dto
-  //     export interface A {
-  //       a: Partial<{ a: 1 }>
-  //       b: Required<{ a?: 1 }>
-  //       c: Readonly<{ a: 1 }>
-  //       d: NonNullable<{ a: 1 } | null>
-  //     }
-  //   `,
-  //   output: $`
-  //     // @keep-dto { "ignores": ["a_b"] }
-  //       a: Partial<{ a: number }>
-  //       b: Required<{ a?: number }>
-  //       c: Readonly<{ a: number }>
-  //       d: NonNullable<{ a: number } | null>
-  //   `,
-  //   errors: ['command-fix'],
-  // },
-  // {
-  //   description: 'Utility Types #2: Pick&Omit',
-  //   code: $`
-  //     // @keep-dto
-  //     export interface A {
-  //       a: Pick<{ a: 1 }, 'a'>
-  //       b: Omit<{ a: 1 }, 'a'>
-  //     }
-  //   `,
-  //   output: $`
-  //     // @keep-dto
-  //     export interface A {
-  //       a: Pick<{ a: number }, 'a'>
-  //       b: Omit<{ a: number }, 'a'>
-  //     }
-  //   `,
-  //   errors: ['command-fix'],
-  // },
-  // {
-  //   description: 'Utility Types #3: Custom',
-  //   code: $`
-  //     // @keep-dto { "utilities": { Awaited: 0, Promise: 0 } }
-  //     export interface A {
-  //       a: Awaited<Promise<{ a: 1 }>>
-  //     }
-  //   `,
-  //   output: $`
-  //     // @keep-dto { "ignores": ["a_b"] }
-  //     export interface A {
-  //       a: Awaited<Promise<{ a: number }>>
-  //     }
-  //   `,
-  //   errors: ['command-fix'],
-  // },
+  {
+    description: 'Utility Types #1: Partial&Required&Readonly&NonNullable',
+    code: $`
+      // @keep-dto
+      export interface A {
+        a: Partial<{ a: 1 }>
+        b: Required<{ a?: 1 }>
+        c: Readonly<{ a: 1 }>
+        d: NonNullable<{ a: 1 } | null>
+      }
+    `,
+    output: $`
+      // @keep-dto
+      export interface A {
+        a: Partial<{ a: number }>
+        b: Required<{ a?: number }>
+        c: Readonly<{ a: number }>
+        d: NonNullable<{ a: number } | null>
+      }
+    `,
+    errors: ['command-fix'],
+  },
+  {
+    description: 'Utility Types #2: Pick&Omit',
+    code: $`
+      // @keep-dto
+      export interface A {
+        a: Pick<{ a: 1 }, 'a'>
+        b: Omit<{ a: 1 }, 'a'>
+      }
+    `,
+    output: $`
+      // @keep-dto
+      export interface A {
+        a: Pick<{ a: number }, 'a'>
+        b: Omit<{ a: number }, 'a'>
+      }
+    `,
+    errors: ['command-fix'],
+  },
+  {
+    description: 'Utility Types #3: Custom',
+    code: $`
+      type X<A, B, C> = A | B | C
+      // @keep-dto { "utilities": { "Awaited": 0, "Promise": 0, "X": [0, 2] } }
+      export interface A {
+        a: Awaited<Promise<{ a: 1 }>>
+        b: X<{ a: 1 }, { b: 2 }, { c: 3 }>
+      }
+    `,
+    output: $`
+      type X<A, B, C> = A | B | C
+      // @keep-dto { "utilities": { "Awaited": 0, "Promise": 0, "X": [0, 2] } }
+      export interface A {
+        a: Awaited<Promise<{ a: number }>>
+        b: X<{ a: number }, { b: 2 }, { c: number }>
+      }
+    `,
+    errors: ['command-fix'],
+  },
 )

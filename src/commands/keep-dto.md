@@ -12,6 +12,7 @@ Keep the DTO(data transfer object) interface normalized.
 ```ts
 interface A {
   a: 1
+  b: 1 | 2
 }
 ```
 
@@ -21,6 +22,7 @@ Will be converted to:
 /// keep-dto
 interface A {
   a: number
+  b: 1 | 2
 }
 ```
 
@@ -105,5 +107,47 @@ interface Foo {
 interface A {
   a: number
   b: number
+}
+```
+
+#### TSUnionType & TSIntersectionType
+
+```ts
+export type A = 1 | { a_b: 2 } & 3
+```
+
+Will be converted to:
+
+```ts
+// @keep-dto
+export type A = 1 | { aB: number } & 3
+```
+
+```ts
+// @keep-dto { "literal": "all", "ignores": ["0", "1.0.a_b"] }
+export type A = 1 | { a_b: 2 } & number
+```
+
+#### Utility Types & Custom Utility Types
+
+buildin:
+
+- Array
+- Partial
+- Required
+- Readonly
+- NonNullable
+- Pick
+- Omit
+- Record
+
+custom:
+
+```ts
+type X<A, B, C> = A | B | C
+// @keep-dto { "utilities": { "Awaited": 0, "Promise": 0, "X": [0, 2] } }
+export interface A {
+  a: Awaited<Promise<{ a: number }>>
+  b: X<{ a: number }, { b: 2 }, { c: number }>
 }
 ```
