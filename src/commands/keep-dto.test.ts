@@ -419,7 +419,7 @@ run(
     errors: ['command-fix', 'command-fix', 'command-fix'],
   },
   {
-    description: 'Record Type Alias',
+    description: 'Utility Types #0: Record Type Alias',
     code: $`
       // @keep-dto { "ignores": ["a_b"] }
       export type R = Record<any, { a: 1, a_b: 2 }>
@@ -430,4 +430,70 @@ run(
     `,
     errors: ['command-fix'],
   },
+  {
+    description: 'TSUnionType & TSIntersectionType',
+    code: $`
+      // @keep-dto { "ignores": ["0.a_b", "1.1.c_d"] }
+      export type A = { a_b: 1 } | { b_c: 1 } & { c_d: 1 } & { c_d: 1 }
+    `,
+    output: $`
+      // @keep-dto { "ignores": ["0.a_b", "1.1.c_d"] }
+      export type A = { a_b: 1 } | { bC: number } & { c_d: 1 } & { cD: number }
+    `,
+    errors: ['command-fix'],
+  },
+  // {
+  //   description: 'Utility Types #1: Partial&Required&Readonly&NonNullable',
+  //   code: $`
+  //     // @keep-dto
+  //     export interface A {
+  //       a: Partial<{ a: 1 }>
+  //       b: Required<{ a?: 1 }>
+  //       c: Readonly<{ a: 1 }>
+  //       d: NonNullable<{ a: 1 } | null>
+  //     }
+  //   `,
+  //   output: $`
+  //     // @keep-dto { "ignores": ["a_b"] }
+  //       a: Partial<{ a: number }>
+  //       b: Required<{ a?: number }>
+  //       c: Readonly<{ a: number }>
+  //       d: NonNullable<{ a: number } | null>
+  //   `,
+  //   errors: ['command-fix'],
+  // },
+  // {
+  //   description: 'Utility Types #2: Pick&Omit',
+  //   code: $`
+  //     // @keep-dto
+  //     export interface A {
+  //       a: Pick<{ a: 1 }, 'a'>
+  //       b: Omit<{ a: 1 }, 'a'>
+  //     }
+  //   `,
+  //   output: $`
+  //     // @keep-dto
+  //     export interface A {
+  //       a: Pick<{ a: number }, 'a'>
+  //       b: Omit<{ a: number }, 'a'>
+  //     }
+  //   `,
+  //   errors: ['command-fix'],
+  // },
+  // {
+  //   description: 'Utility Types #3: Custom',
+  //   code: $`
+  //     // @keep-dto { "utilities": { Awaited: 0, Promise: 0 } }
+  //     export interface A {
+  //       a: Awaited<Promise<{ a: 1 }>>
+  //     }
+  //   `,
+  //   output: $`
+  //     // @keep-dto { "ignores": ["a_b"] }
+  //     export interface A {
+  //       a: Awaited<Promise<{ a: number }>>
+  //     }
+  //   `,
+  //   errors: ['command-fix'],
+  // },
 )

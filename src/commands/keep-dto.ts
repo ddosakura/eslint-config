@@ -91,6 +91,11 @@ export const keepDto = defineCommand({
       }
     }
 
+    function formatTypeNodes(els: TSESTree.TypeNode[], prefix = '') {
+      els.forEach((el, index) => {
+        formatTypeNode(el, withPrefix(`${index}`, prefix))
+      })
+    }
     function formatTypeNode(typeNode: TSESTree.TypeNode, prefix = '') {
       if (typeNode.type === AST_NODE_TYPES.TSLiteralType) {
         formatTSLiteralType(typeNode)
@@ -100,6 +105,9 @@ export const keepDto = defineCommand({
       }
       else if (typeNode.type === AST_NODE_TYPES.TSTypeLiteral) {
         run(typeNode.members, prefix)
+      }
+      else if (typeNode.type === AST_NODE_TYPES.TSUnionType || typeNode.type === AST_NODE_TYPES.TSIntersectionType) {
+        formatTypeNodes(typeNode.types, prefix)
       }
       else if (typeNode.type === AST_NODE_TYPES.TSTupleType) {
         if (options?.tuple === 'asArray') {
@@ -135,7 +143,7 @@ export const keepDto = defineCommand({
         }
       }
     }
-    function run(els: (TSESTree.TypeElement | TSESTree.TypeNode)[], prefix = '') {
+    function run(els: TSESTree.TypeElement[], prefix = '') {
       for (const el of els) {
         if (el.type !== AST_NODE_TYPES.TSPropertySignature) continue
 
