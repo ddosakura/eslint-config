@@ -19,6 +19,12 @@ export interface KeepDtoInlineOptions {
    * - 'asArray': [{a: 1}, 1] => { a: number }[]
    */
   tuple: 'asArray'
+  /**
+   * handle TSLiteralType in TSUnionType & TSIntersectionType
+   *
+   * @defalut false
+   */
+  literal: false | 'all' | 'union' | 'intersection'
 }
 
 function normalizeKey(key: string, mode: KeepDtoInlineOptions['key'] = 'camelize') {
@@ -91,10 +97,11 @@ export const keepDto = defineCommand({
       }
     }
 
-    function formatTypeNodes(els: TSESTree.TypeNode[], prefix = '') {
-      els.forEach((el, index) => {
-        formatTypeNode(el, withPrefix(`${index}`, prefix))
-      })
+    function getNewKey(rawKey: string, prefix: string) {
+      if (options?.ignores?.includes(`.${rawKey}`)) return
+      const key = withPrefix(rawKey, prefix)
+      if (options?.ignores?.includes(key)) return
+      return key
     }
     function formatTypeNode(typeNode: TSESTree.TypeNode, prefix = '') {
       if (typeNode.type === AST_NODE_TYPES.TSLiteralType) {
@@ -107,7 +114,15 @@ export const keepDto = defineCommand({
         run(typeNode.members, prefix)
       }
       else if (typeNode.type === AST_NODE_TYPES.TSUnionType || typeNode.type === AST_NODE_TYPES.TSIntersectionType) {
-        formatTypeNodes(typeNode.types, prefix)
+        const ignore = !(options?.literal === 'all'
+          || (typeNode.type === AST_NODE_TYPES.TSUnionType && options?.literal === 'union')
+          || (typeNode.type === AST_NODE_TYPES.TSIntersectionType && options?.literal === 'intersection'))
+        typeNode.types.forEach((el, index) => {
+          if (ignore && el.type === AST_NODE_TYPES.TSLiteralType) return
+          const key = getNewKey(`${index}`, prefix)
+          if (!key) return
+          formatTypeNode(el, key)
+        })
       }
       else if (typeNode.type === AST_NODE_TYPES.TSTupleType) {
         if (options?.tuple === 'asArray') {
@@ -152,9 +167,8 @@ export const keepDto = defineCommand({
           if (el.key.type === AST_NODE_TYPES.Identifier) return el.key.name
         })()
         if (!rawKey) continue
-        if (options?.ignores?.includes(`.${rawKey}`)) continue
-        const key = withPrefix(rawKey, prefix)
-        if (options?.ignores?.includes(key)) continue
+        const key = getNewKey(rawKey, prefix)
+        if (!key) continue
         const identifier = normalizeKey(rawKey, options?.key)
         if (identifier) replace(el.key.range, identifier)
         const newKey = identifier ? withPrefix(identifier, prefix) : key

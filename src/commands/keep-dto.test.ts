@@ -431,7 +431,7 @@ run(
     errors: ['command-fix'],
   },
   {
-    description: 'TSUnionType & TSIntersectionType',
+    description: 'TSUnionType & TSIntersectionType #1',
     code: $`
       // @keep-dto { "ignores": ["0.a_b", "1.1.c_d"] }
       export type A = { a_b: 1 } | { b_c: 1 } & { c_d: 1 } & { c_d: 1 }
@@ -439,6 +439,30 @@ run(
     output: $`
       // @keep-dto { "ignores": ["0.a_b", "1.1.c_d"] }
       export type A = { a_b: 1 } | { bC: number } & { c_d: 1 } & { cD: number }
+    `,
+    errors: ['command-fix'],
+  },
+  {
+    description: 'TSUnionType & TSIntersectionType #2.1',
+    code: $`
+      // @keep-dto { "literal": "all", "ignores": ["0"] }
+      export type A = 1 | 2 & 3
+    `,
+    output: $`
+      // @keep-dto { "literal": "all", "ignores": ["0"] }
+      export type A = 1 | number & number
+    `,
+    errors: ['command-fix'],
+  },
+  {
+    description: 'TSUnionType & TSIntersectionType #2.2',
+    code: $`
+      // @keep-dto { "literal": "all", "ignores": [".0"] }
+      export type A = 1 | 2 & 3
+    `,
+    output: $`
+      // @keep-dto { "literal": "all", "ignores": [".0"] }
+      export type A = 1 | 2 & number
     `,
     errors: ['command-fix'],
   },
