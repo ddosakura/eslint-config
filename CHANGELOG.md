@@ -1,5 +1,15 @@
 # @ddosakura/eslint-config
 
+## 0.2.4
+
+### Patch Changes
+
+- [`61f6b0c`](https://github.com/ddosakura/eslint-config/commit/61f6b0cb4c1aa98493b5fb7576bd136262aadf85) Thanks [@ddosakura](https://github.com/ddosakura)! - @keep-dto literal option
+
+- [`3c48eef`](https://github.com/ddosakura/eslint-config/commit/3c48eef66c620a90207c91d4c42e5d8628bbe0f3) Thanks [@ddosakura](https://github.com/ddosakura)! - @keep-dto support handle TSUnionType & TSIntersectionType
+
+- [`53fc110`](https://github.com/ddosakura/eslint-config/commit/53fc110a8a4aafd24683f1c3fa4e36af8d329adb) Thanks [@ddosakura](https://github.com/ddosakura)! - @keep-dto support handle Utility Types & Custom Utility Types
+
 ## 0.2.3
 
 ### Patch Changes
