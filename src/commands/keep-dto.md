@@ -26,7 +26,7 @@ interface A {
 }
 ```
 
-#### normalizeKey
+### normalizeKey
 
 ```ts
 // @keep-dto { "key": false }
@@ -64,7 +64,7 @@ interface A {
 }
 ```
 
-#### ignore both normalizeKey & type annotation
+### ignore both normalizeKey & type annotation
 
 ```ts
 // @keep-dto { "key": "underlize", "ignores": ["abC"] }
@@ -82,7 +82,7 @@ type Bar = {
 }
 ```
 
-#### about tuple
+### about tuple
 
 ```ts
 interface Foo {
@@ -99,7 +99,7 @@ interface Foo {
 }
 ```
 
-#### work with `keep-sorted`
+### work with `keep-sorted`
 
 ```ts
 /// keep-dto
@@ -110,7 +110,7 @@ interface A {
 }
 ```
 
-#### TSUnionType & TSIntersectionType
+### TSUnionType & TSIntersectionType
 
 ```ts
 export type A = 1 | { a_b: 2 } & 3
@@ -128,7 +128,7 @@ export type A = 1 | { aB: number } & 3
 export type A = 1 | { a_b: 2 } & number
 ```
 
-#### Utility Types & Custom Utility Types
+### Utility Types & Custom Utility Types
 
 buildin:
 

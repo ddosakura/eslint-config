@@ -2,6 +2,7 @@
   "name": "@ddosakura/eslint-config",
   "type": "module",
   "version": "0.2.4",
+  "packageManager": "pnpm@10.32.1",
   "description": "ddosakura's ESLint config preset",
   "author": "ddosakura",
   "homepage": "https://github.com/ddosakura/eslint-config",
@@ -20,37 +21,43 @@
     "dist"
   ],
   "scripts": {
+    "auto": "pnpm taze:major:w && pnpm test && pnpm lint:fix",
+    "taze": "npx taze",
+    "taze:w": "npx taze -w",
+    "taze:major": "npx taze major",
+    "taze:major:w": "npx taze major -w",
     "test": "vitest --run",
-    "inspect:g": "eslint --flag unstable_ts_config --inspect-config",
+    "inspect:g": "eslint --inspect-config",
     "inspect": "npx @eslint/config-inspector",
-    "lint": "eslint --flag unstable_ts_config .",
-    "lint:fix": "eslint --flag unstable_ts_config . --fix",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "build": "tsup --format esm,cjs --clean --dts",
     "changeset:beta": "changeset pre enter beta",
     "changeset:exit": "changeset pre exit",
     "publish-packages": "npm run build && changeset version && npx changeset publish"
   },
   "peerDependencies": {
-    "eslint": "^8.53.0 || ^9.0.0"
+    "eslint": "^9.10.0 || ^10.0.0"
   },
   "dependencies": {
-    "@antfu/eslint-config": "^3.6.0",
-    "eslint-plugin-command": "^0.2.6",
-    "magic-string": "^0.30.11"
+    "@antfu/eslint-config": "^7.7.0",
+    "eslint-plugin-command": "^3.5.2",
+    "magic-string": "^0.30.21"
   },
   "devDependencies": {
-    "@antfu/utils": "^0.7.10",
-    "@changesets/changelog-github": "^0.5.0",
-    "@changesets/cli": "^2.27.8",
-    "@ddosakura/changesets-scripts": "^0.1.0",
-    "@eslint/config-inspector": "^0.5.4",
-    "@types/node": "^22.5.5",
-    "@typescript-eslint/types": "^8.6.0",
-    "eslint": "^9.10.0",
-    "eslint-vitest-rule-tester": "^0.6.1",
-    "jiti": "^1.21.6",
-    "tsup": "^8.2.4",
-    "typescript": "~5.5.4",
-    "vitest": "^2.1.1"
+    "@antfu/utils": "^9.3.0",
+    "@changesets/changelog-github": "^0.6.0",
+    "@changesets/cli": "^2.30.0",
+    "@ddosakura/changesets-scripts": "^0.1.1",
+    "@eslint/config-inspector": "^1.5.0",
+    "@types/node": "^25.4.0",
+    "@typescript-eslint/parser": "^8.57.0",
+    "@typescript-eslint/types": "^8.57.0",
+    "eslint": "^10.0.3",
+    "eslint-vitest-rule-tester": "^3.1.0",
+    "jiti": "^2.6.1",
+    "tsup": "^8.5.1",
+    "typescript": "~5.9.3",
+    "vitest": "^4.0.18"
   }
 }

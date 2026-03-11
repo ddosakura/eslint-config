@@ -2,7 +2,7 @@ import { keepSorted } from 'eslint-plugin-command/commands'
 import { $, run } from './_test-utils'
 import { keepDto } from './keep-dto'
 
-run(
+await run(
   [keepDto, keepSorted],
   $`
     // @keep-dto

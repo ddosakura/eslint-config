@@ -31,14 +31,19 @@ export interface KeepDtoInlineOptions {
   utilities: Record<string, number | number[]>
 }
 
+// @regex101 https://regex101.com/?regex=%5E%5Ba-z_%24%5D%5B%5Cw%24%5D*%24&flags=i&flavor=javascript
+const reValidKey = /^[a-z_$][\w$]*$/i
+const reUpperCase = /[A-Z]/g
+const reUnderscorePrefix = /^_/
+const reUnderscoreCase = /_([a-z])/gi
+
 function normalizeKey(key: string, mode: KeepDtoInlineOptions['key'] = 'camelize') {
-  // @regex101 https://regex101.com/?regex=%5E%5Ba-z_%24%5D%5B%5Cw%24%5D*%24&flags=i&flavor=javascript
-  if (!/^[a-z_$][\w$]*$/i.test(key)) return false
+  if (!reValidKey.test(key)) return false
   if (!mode) return key
   if (mode === 'underlize') {
-    return key.replace(/[A-Z]/g, $0 => `_${$0.toLowerCase()}`).replace(/^_/, '')
+    return key.replace(reUpperCase, $0 => `_${$0.toLowerCase()}`).replace(reUnderscorePrefix, '')
   }
-  const newKey = key.replace(/_([a-z])/gi, (_, $1: string) => $1.toUpperCase())
+  const newKey = key.replace(reUnderscoreCase, (_, $1: string) => $1.toUpperCase())
   const first = newKey[0]
   return newKey.replace(first, mode === 'pascalize' ? first.toUpperCase() : first.toLowerCase())
 }
