@@ -21,7 +21,7 @@
     "dist"
   ],
   "scripts": {
-    "auto": "pnpm taze:major:w && pnpm test && pnpm lint:fix",
+    "auto": "pnpm taze:major:w && pnpm i && pnpm test && pnpm lint:fix",
     "taze": "npx taze",
     "taze:w": "npx taze -w",
     "taze:major": "npx taze major",
