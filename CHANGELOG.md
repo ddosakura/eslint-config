@@ -1,5 +1,11 @@
 # @ddosakura/eslint-config
 
+## 0.3.0
+
+### Minor Changes
+
+- [`83c56a1`](https://github.com/ddosakura/eslint-config/commit/83c56a11abf3a61fdeeed03db9e09032c03c491c) Thanks [@ddosakura](https://github.com/ddosakura)! - update deps, fix lint error, unstable_ts_config is no longer needed
+
 ## 0.2.4
 
 ### Patch Changes
